@@ -36,7 +36,7 @@ function loadUserState(){
   }catch(error){console.warn('Не удалось прочитать локальные данные Атласа:',error);return {...baseState};}
 }
 const userState=loadUserState();
-let activeQuiz=null;
+let activeQuiz=null;let lastQuizKind='tarot';
 function persist(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(userState));return true;}catch(error){console.error('Ошибка сохранения локальных данных:',error);showModal('Не удалось сохранить','<p>Браузер не разрешил сохранить данные. Проверь настройки хранилища или режим приватного просмотра.</p>');return false;}}
 function esc(value){return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));}
 function modalContent(title,html){activeQuiz=null;showModal(title,html);}
@@ -75,6 +75,7 @@ function openSpreadBuilder(){
   modalContent('Конструктор расклада','<p>Создайте простую схему и задайте названия позиций. Конструктор сохраняет структуру локально.</p><form data-form="custom-spread">'+field('Название расклада','title','Например, «Путь решения»')+areaField('Позиции — по одной в строке','positions','Ситуация\\nРесурсы\\nСледующий шаг')+'<button class="atlas-button primary" type="submit">Сохранить схему</button></form><h3 class="atlas-subheading">Мои схемы</h3>'+itemList(userState.customSpreads.map(s=>s.title+' · '+s.positions.join(' / '))));
 }
 function startQuiz(kind){
+  lastQuizKind=kind;
   const questions=kind==='tarot'?(ATLAS_DATA.tarotExam||[]):(ATLAS_DATA.psychology?.test||[]);
   activeQuiz={kind,questions,index:0,score:0,answer:null};
   renderQuizStep();
@@ -101,6 +102,7 @@ function openSynastry(){
   modalContent('Астрология · Синастрия','<p>Сохраните два профиля, чтобы подготовить основу для сравнения. Расчёт совместимости пока не производится.</p><form data-form="synastry">'+field('Имя первого человека','personA','Имя',p.personA||'')+field('Дата рождения первого человека','dateA','',p.dateA||'','date')+field('Имя второго человека','personB','Имя',p.personB||'')+field('Дата рождения второго человека','dateB','',p.dateB||'','date')+'<button class="atlas-button primary" type="submit">Сохранить профили</button></form>');
 }
 function openAstrologyTool(name){
+  const aliases={'Дома':'Астрологические дома','Календарь':'Астрологический календарь','Обучение':'Обучение астрологии'};name=aliases[name]||name;
   if(name==='Натальная карта')return openBirthProfile();
   if(name==='Анализ карты'){
     if(!userState.astroProfile)return openBirthProfile();
@@ -213,12 +215,14 @@ function openFeature(name){
   }
 }
 function handleInfo(name){
+  const aliases={'Расклады':'Расклады Таро','Экзамен':'Экзамен по Таро','Конструктор':'Конструктор раскладов','Библиотека':'Библиотека Таро','Дневник':'Дневник Таро','Тесты':'Психологические тесты','Техники':'Техники КПТ','Техники (КБТ)':'Техники КПТ','Толкование':'Толкование сна','Повторы':'Повторяющиеся сны','Символы':'Словарь символов','Анализ психики':'Анализ сновидения','Записать сон':'Новая запись сна','Рейтинг':'Рейтинг Арены','История':'История дуэлей','Правила':'Правила Арены'};name=aliases[name]||name;
   if(current==='tarot'){
     if(name==='Значение карты')return renderTarotCard('Звезда');
     if(name==='Символика Звезды')return modalContent(name,'<p>'+esc(findCard('Звезда').symbols)+'</p>');
     if(name==='Сочетания')return modalContent(name,'<p>Учебный пример:</p><ul class="atlas-list"><li>Звезда + Отшельник — надежда через тишину и самостоятельное осмысление.</li><li>Звезда + Сила — восстановление через выдержку.</li><li>Звезда + Башня — поиск ориентира после резкой перемены.</li></ul><p>Смысл сочетания зависит от вопроса и позиций карт.</p>');
     if(name==='Практика')return renderTarotTab('Практика');
     if(name==='Заметки'||name==='Дневник Таро')return openTarotNote('Звезда');
+    if(name==='Дуэли')return navigate('arena');
     if(name==='Расклады Таро')return renderTarotTab('Практика');
     if(name==='Экзамен по Таро')return startQuiz('tarot');
     if(name==='Конструктор раскладов')return openSpreadBuilder();
@@ -286,7 +290,7 @@ function handleModalClick(event){
   if(action==='note-card')return openTarotNote(control.dataset.card);
   if(action==='choose-deck'){userState.deck=control.dataset.deck;persist();renderTarotTab('Колоды');return;}
   if(action==='quiz-next'){if(activeQuiz){activeQuiz.index++;activeQuiz.answer=null;renderQuizStep();}return;}
-  if(action==='restart-quiz'){startQuiz(activeQuiz?.kind||'tarot');return;}
+  if(action==='restart-quiz'){startQuiz(lastQuizKind);return;}
   if(action==='choose-theme'){applyTheme(control.dataset.theme);openThemeList();return;}
   if(action==='distortion'){const d=ATLAS_DATA.psychology.distortions[Number(control.dataset.index)];return modalContent(d.name,'<p>'+esc(d.desc)+'</p><p class="atlas-kicker">Вопрос для проверки</p><p>'+esc(d.prompt)+'</p>'+actionButton('Назад к списку','back-distortions'));}
   if(action==='back-distortions')return openCognitiveDistortions();
