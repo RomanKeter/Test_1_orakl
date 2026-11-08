@@ -88,3 +88,94 @@
   outline-offset:2px;
 }
 .context-card,.desktop-nav,.context-panel { min-width:0; }
+
+
+/* Stage 3: interactive module panels inside the parchment dialogs. */
+#modalBody{max-height:min(58svh,560px);overflow:auto;padding:2px 4px 7px;text-align:left;scrollbar-width:thin;scrollbar-color:#a47e4d #e8d4ad}
+#modalBody>p{line-height:1.65;margin:9px 0;font-size:12px}
+#modalBody .atlas-kicker{color:#876239;font-size:10px;letter-spacing:1px;text-transform:uppercase}
+#modalBody .atlas-muted{display:block;color:#886e4d;font-size:10px;margin:8px 0}
+#modalBody .atlas-disclaimer,#modalBody .atlas-saved-hint{padding:8px 10px;border-left:3px solid #aa844f;background:#e8d5b4;color:#6f5638;font-size:10px;line-height:1.55;margin:12px 0}
+#modalBody .atlas-subheading{font:700 19px 'Cormorant Garamond';margin:16px 0 7px;color:#4a311e}
+#modalBody .atlas-field{display:block;margin:10px 0;color:#60452a;font-size:11px}
+#modalBody .atlas-field>span{display:block;margin-bottom:4px;font-weight:600}
+#modalBody input:not([type=checkbox]),#modalBody textarea,#modalBody select{width:100%;max-width:100%;border:1px solid #a98859;border-radius:4px;padding:9px 10px;background:#fff2d8;color:#352518;font:12px Literata;box-shadow:inset 0 1px 3px #5e3e1d18}
+#modalBody textarea{resize:vertical;min-height:76px;line-height:1.55}
+#modalBody input:focus,#modalBody textarea:focus,#modalBody select:focus{outline:2px solid #b78b4d;outline-offset:1px}
+#modalBody .atlas-button{display:inline-flex;align-items:center;justify-content:center;margin:7px 6px 7px 0;padding:9px 14px;border:1px solid #805a31;border-radius:4px;background:linear-gradient(#e7d0a6,#c6a474);color:#392718;font:600 11px Literata;cursor:pointer;box-shadow:0 2px 4px #4b301b26}
+#modalBody .atlas-button.primary{background:linear-gradient(#875d34,#56361f);color:#fff0d1;border-color:#53331d}
+#modalBody .atlas-button:focus-visible,#modalBody .atlas-choice:focus-visible,#modalBody .atlas-mini-button:focus-visible,#modalBody .atlas-quiz-option:focus-visible{outline:2px solid #ae7937;outline-offset:2px}
+#modalBody .atlas-list{padding-left:20px;margin:9px 0;color:#5b432b}
+#modalBody .atlas-list li{padding:3px 0;font-size:11px;line-height:1.55}
+#modalBody .atlas-choice-list{display:grid;gap:7px;margin:10px 0}
+#modalBody .atlas-choice{width:100%;display:flex;align-items:center;gap:9px;text-align:left;padding:9px 10px;border:1px solid #b18b58;background:linear-gradient(115deg,#fff0d0,#e4cda3);color:#3c2a1c;border-radius:5px;cursor:pointer}
+#modalBody .atlas-choice>span{font-size:20px;color:#8c6536}
+#modalBody .atlas-choice>b{flex:1;font:600 15px 'Cormorant Garamond'}
+#modalBody .atlas-choice b small{display:block;font:10px Literata;color:#836b4c;margin-top:3px}
+#modalBody .atlas-choice>i{font-style:normal;font-size:17px}
+#modalBody .atlas-choice.chosen{outline:2px solid #9c6d35;background:linear-gradient(115deg,#f8e4bb,#d4b482)}
+#modalBody .atlas-feature-card{padding:12px;border:1px solid #aa8657;background:linear-gradient(135deg,#fff0d0,#e4cda4);box-shadow:0 3px 8px #5b3a1a24}
+#modalBody .atlas-feature-card>b{display:block;font:700 22px 'Cormorant Garamond'}
+#modalBody .atlas-feature-card>small{display:block;font-size:10px;color:#866640;margin:4px 0}
+#modalBody .atlas-feature-card>p{font-size:11px;line-height:1.6}
+#modalBody .atlas-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+#modalBody .atlas-card-option{min-height:58px;border:1px solid #ab8757;background:linear-gradient(#fff0d0,#dcc398);border-radius:4px;color:#442e1c;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+#modalBody .atlas-card-option>b{font:600 13px 'Cormorant Garamond'}
+#modalBody .atlas-card-option>span{font:600 12px 'Cormorant Garamond'}
+#modalBody .atlas-two-columns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+#modalBody .atlas-two-columns>div{padding:8px;background:#e8d5b4;border:1px solid #b99a6b}
+#modalBody .atlas-two-columns b{font:600 14px 'Cormorant Garamond'}
+#modalBody .atlas-two-columns p{font-size:10px;line-height:1.55}
+#modalBody .atlas-saved-list{display:grid;gap:7px}
+#modalBody .atlas-saved-item{display:flex;align-items:flex-start;gap:8px;padding:9px;border:1px solid #c0a274;background:#f4e4c4}
+#modalBody .atlas-saved-item>div:first-child{min-width:0;flex:1}
+#modalBody .atlas-saved-item b{display:block;font:600 15px 'Cormorant Garamond'}
+#modalBody .atlas-saved-item small{display:block;color:#8a704e;font-size:9px;margin:2px 0}
+#modalBody .atlas-saved-item p{font-size:10px;white-space:pre-line;line-height:1.5;margin:5px 0;color:#5c442b;overflow-wrap:anywhere}
+#modalBody .atlas-mini-button{border:1px solid #b38e5d;background:#ead5b1;color:#5b3d24;border-radius:4px;min-width:25px;min-height:25px;cursor:pointer}
+#modalBody .atlas-row-actions{display:flex;gap:4px}
+#modalBody .atlas-empty{font-size:11px;color:#876e4d;padding:10px;background:#ead8b8}
+#modalBody .atlas-check-list{display:grid;gap:7px;margin:12px 0}
+#modalBody .atlas-check{display:flex;align-items:flex-start;gap:8px;padding:8px;background:#f4e4c4;border:1px solid #c3a477;font-size:11px;line-height:1.5}
+#modalBody .atlas-check input,#modalBody .atlas-project input{accent-color:#80532d;margin-top:2px}
+#modalBody .atlas-project-list{display:grid;gap:5px}
+#modalBody .atlas-project{display:flex;align-items:center;gap:8px;padding:8px;border:1px solid #c3a477;background:#f4e4c4;font-size:11px}
+#modalBody .atlas-project span{flex:1}
+#modalBody .atlas-project span.done{text-decoration:line-through;color:#89785e}
+#modalBody .atlas-progress{height:7px;border-radius:8px;background:#d0b88e;overflow:hidden;margin:8px 0}
+#modalBody .atlas-progress>span{display:block;height:100%;background:#896136}
+#modalBody .atlas-question{font:700 20px/1.2 'Cormorant Garamond';margin:10px 0}
+#modalBody .atlas-quiz-options{display:grid;gap:7px}
+#modalBody .atlas-quiz-option{width:100%;text-align:left;padding:9px 10px;border:1px solid #b48f5e;background:#f8ebce;color:#3d2a1b;border-radius:4px;font:11px Literata;cursor:pointer}
+#modalBody .atlas-quiz-option:disabled{opacity:.72;cursor:default}
+#modalBody .atlas-feedback{margin-top:10px;padding:9px 10px;border:1px solid #a98758;background:#f0dfbd}
+#modalBody .atlas-feedback.correct{border-left:4px solid #5d7b45}
+#modalBody .atlas-feedback.incorrect{border-left:4px solid #a34532}
+#modalBody .atlas-feedback b{font:700 16px 'Cormorant Garamond'}
+#modalBody .atlas-feedback p{font-size:10px;line-height:1.55;margin:4px 0}
+#modalBody .atlas-result-score{font:700 42px 'Cormorant Garamond';color:#8a5e2e;text-align:center;margin:9px 0}
+#modalBody .atlas-drawn-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:10px 0}
+#modalBody .atlas-drawn-grid article{padding:9px 8px;border:1px solid #a98552;background:linear-gradient(145deg,#f7e7c5,#dfc69a)}
+#modalBody .atlas-drawn-grid article small,#modalBody .atlas-drawn-grid article b,#modalBody .atlas-drawn-grid article strong{display:block;text-align:center}
+#modalBody .atlas-drawn-grid article small{font-size:9px;color:#806444}
+#modalBody .atlas-drawn-grid article b{font:600 13px 'Cormorant Garamond';margin-top:4px}
+#modalBody .atlas-drawn-grid article strong{font:700 17px 'Cormorant Garamond'}
+#modalBody .atlas-drawn-grid article p{font-size:9px;line-height:1.45;margin:5px 0}
+#modalBody .atlas-symbol-list{display:grid;gap:6px}
+#modalBody .atlas-symbol-list article{padding:8px 10px;background:#f4e4c4;border:1px solid #c0a174}
+#modalBody .atlas-symbol-list b{font:700 16px 'Cormorant Garamond'}
+#modalBody .atlas-symbol-list p{font-size:10px;line-height:1.5;margin:3px 0}
+#modalBody .atlas-saved-hint{overflow-wrap:anywhere}
+#modalBody form{margin:10px 0}
+#modalBody .atlas-empty a{color:#724a24}
+.device[data-theme="magic"] .screen:not([data-page="themes"]) .screen-art{filter:hue-rotate(18deg) saturate(1.12) brightness(.93)}
+.device[data-theme="cyber"] .screen:not([data-page="themes"]) .screen-art{filter:hue-rotate(155deg) saturate(.84) brightness(.92)}
+.device[data-theme="garden"] .screen:not([data-page="themes"]) .screen-art{filter:hue-rotate(28deg) saturate(.84) sepia(.12)}
+.device[data-theme="ocean"] .screen:not([data-page="themes"]) .screen-art{filter:hue-rotate(172deg) saturate(.88) brightness(.92)}
+.device[data-theme="minimal"] .screen:not([data-page="themes"]) .screen-art{filter:saturate(.35) contrast(.92) brightness(1.04)}
+@media(max-width:520px){
+  #modalBody{max-height:55svh}
+  #modalBody .atlas-two-columns{grid-template-columns:1fr}
+  #modalBody .atlas-drawn-grid{grid-template-columns:1fr}
+  #modalBody .atlas-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
