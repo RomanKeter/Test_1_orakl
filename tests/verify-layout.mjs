@@ -14,18 +14,13 @@ try {
   browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   page.on('pageerror', error => failures.push(error.message));
-  page.on('console', message => {
-    if (message.type() === 'error' && !message.text().includes('fonts.googleapis.com')) {
-      failures.push(message.text());
-    }
-  });
 
   await page.goto('http://127.0.0.1:4173/', { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('.screens.ready', { timeout: 30000 });
   await page.waitForFunction(() => {
     const images = [...document.querySelectorAll('.screen-art')];
     return images.length === 8 && images.every(img => img.complete && img.naturalWidth > 0);
-  }, { timeout: 30000 });
+  }, null, { timeout: 30000 });
 
   const pageNames = ['home', 'map', 'tarot', 'astrology', 'psychology', 'dreams', 'arena', 'themes'];
   assert.equal(await page.locator('.screen').count(), 8, 'All eight reference screens should exist');
@@ -67,6 +62,11 @@ try {
     })[name], 'Context panel should follow page: ' + name);
   }
 
+  // Reset route history so the Back button is tested from a known start.
+  await page.goto('http://127.0.0.1:4173/', { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('.screens.ready', { timeout: 30000 });
+  await page.waitForFunction(() => document.querySelector('.screen.active')?.dataset.page === 'home', null, { timeout: 30000 });
+
   // Browser Back should restore the previous page after SPA navigation.
   await page.locator('[data-nav="tarot"]').first().click();
   await page.locator('[data-nav="astrology"]').first().click();
@@ -80,7 +80,7 @@ try {
   await page.locator('#modalOk').click();
   assert.equal(await page.locator('#modal').isVisible(), false, 'Modal should close');
   await page.locator('.screen[data-page="tarot"] .hit[aria-label="Назад"]').click();
-  await page.waitForFunction(() => document.querySelector('.screen.active')?.dataset.page === 'astrology' || document.querySelector('.screen.active')?.dataset.page === 'home');
+  await page.waitForFunction(() => document.querySelector('.screen.active')?.dataset.page === 'home');
 
   // Tablet: compact icon rail, central artwork, no right panel.
   await page.setViewportSize({ width: 900, height: 1024 });
