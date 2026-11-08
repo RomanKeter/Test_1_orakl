@@ -40,6 +40,14 @@ try{
   assert.equal((await saved()).tarotNotes.length,1,'Tarot note should be stored locally');
   await closeModal();
 
+  // Tarot: custom spread builder parses one position per line.
+  await clickHotspot('tarot','Конструктор');
+  await page.locator('#modalBody input[name="title"]').fill('Проверка трёх позиций');
+  await page.locator('#modalBody textarea[name="positions"]').fill('Ситуация\nПрепятствие\nСовет');
+  await page.locator('#modalBody button[type="submit"]').click();
+  assert.equal((await saved()).customSpreads[0].positions.length,3,'Custom spread should preserve three separate positions');
+  await closeModal();
+
   // Tarot: exam answers and quiz progression.
   await clickHotspot('tarot','Экзамен');
   assert.equal(await page.locator('#modalTitle').textContent(),'Экзамен по Таро');
@@ -107,6 +115,14 @@ try{
   assert.equal((await saved()).projects[0].done,true,'Project completion should persist');
   await closeModal();
 
+  // Psychology: projects can be completed and the state persists.
+  await clickHotspot('psychology','Проекты развития');
+  await page.locator('#modalBody input[name="title"]').fill('Ежедневная практика');
+  await page.locator('#modalBody button[type="submit"]').click();
+  assert.equal((await saved()).projects.length,1,'Project should be created');
+  await page.locator('#modalBody input[data-project-id]').check();
+  assert.equal((await saved()).projects[0].done,true,'Project completion should persist');
+
   // Dreams: create a journal entry and verify it appears in the saved list.
   await page.locator('.screen[data-page="psychology"] .hit[aria-label="Назад"]').click();
   await clickHotspot('home','Сновидения');
@@ -152,6 +168,7 @@ try{
   await clickHotspot('arena','Войти в дуэль');
   await page.locator('#modalBody textarea[name="answer"]').fill('Я читаю Звезду как спокойное восстановление доверия. Эта карта показывает надежду, а Отшельник добавляет время для размышления.');
   await page.locator('#modalBody button[type="submit"]').click();
+  assert.equal(Number(await page.locator('.atlas-result-score').textContent()),'Я читаю Звезду как спокойное восстановление доверия. Эта карта показывает надежду, а Отшельник добавляет время для размышления.'.trim().split(/\s+/).length,'Duel word count should count whitespace-separated words');
   assert.equal((await saved()).duelHistory.length,1,'Duel answer should be recorded');
   assert.match(await page.locator('#modalTitle').textContent(),/Ответ принят/);
   await closeModal();
