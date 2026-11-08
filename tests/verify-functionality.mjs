@@ -89,7 +89,8 @@ try{
   // Themes: selection changes the active theme and survives a reload.
   await page.locator('.screen[data-page="dreams"] .hit[aria-label="Назад"]').click();
   await clickHotspot('home','Главная');
-  await page.locator('[data-nav="themes"]').first().click();
+  await clickHotspot('home','Открыть меню');
+  await page.locator('#modal [data-modal-go="themes"]').click();
   await clickHotspot('themes','Магическая Академия');
   assert.equal(await page.locator('.device').getAttribute('data-theme'),'magic','Theme should be applied to the device');
   await page.reload({waitUntil:'domcontentloaded'});
@@ -97,7 +98,9 @@ try{
   assert.equal(await page.locator('.device').getAttribute('data-theme'),'magic','Theme should persist after reload');
 
   // Arena: save a demonstration duel response.
-  await page.locator('[data-nav="arena"]').first().click();
+  await page.locator('.screen[data-page="themes"] .hit[aria-label="Назад"]').click();
+  await clickHotspot('home','Открыть меню');
+  await page.locator('#modal [data-modal-go="arena"]').click();
   await clickHotspot('arena','Войти в дуэль');
   await page.locator('#modalBody textarea[name="answer"]').fill('Я читаю Звезду как спокойное восстановление доверия. Эта карта показывает надежду, а Отшельник добавляет время для размышления.');
   await page.locator('#modalBody button[type="submit"]').click();
