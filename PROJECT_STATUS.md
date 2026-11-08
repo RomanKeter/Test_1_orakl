@@ -178,15 +178,18 @@ https://github.com/RomanKeter/Test_1_orakl/actions/runs/42524043731
 | 2026-11-08 | GitHub Pages | Deployment run #33 — success |
 | 2026-11-08 | Визуальные превью | Desktop/tablet/mobile PNG из CI artifact просмотрены |
 | 2026-11-08 | README | Описание функций, локального хранения и ограничений обновлено |
+| 2026-11-08 | UI verification run #22 | Commit `b9362308efda6108e5166be69e32f32fc07dca1c` — success |
+| 2026-11-08 | Pages deployment | Commit `2d36b0b0f9540d27e16d33e8e1abd6980b5edd29` — success |
+| 2026-11-08 | PROJECT_STATUS.md | Этап 3 завершён, журнал обновлён; commit `2d36b0b0f9540d27e16d33e8e1abd6980b5edd29` |
 
 ### Последняя успешная контрольная точка
 
 - Branch: `main`
-- HEAD: `bdb6a18cb910cd779abfdc32813e442ecb9b6d6b`
-- UI workflow run #21: success
-- Pages deployment run #33: success
+- HEAD: `2d36b0b0f9540d27e16d33e8e1abd6980b5edd29`
+- UI verification run #22 on code/documentation commit `b9362308efda6108e5166be69e32f32fc07dca1c`: success
+- Pages deployment for status commit `2d36b0b0f9540d27e16d33e8e1abd6980b5edd29`: success
 
-После обновления README и этого файла новый HEAD и результаты запуска необходимо перечитать из GitHub и заменить в этой секции.
+Последний контрольный HEAD после обновления README и PROJECT_STATUS.md: `2d36b0b0f9540d27e16d33e8e1abd6980b5edd29`. Перед каждым новым этапом всё равно перечитывать актуальный HEAD и workflow runs.
 
 ---
 
