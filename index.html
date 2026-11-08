@@ -1,61 +1,56 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#27170e">
-  <meta name="description" content="Атлас Познания — интерактивный кабинет исследователя">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#211812"><meta name="description" content="Атлас Познания — кабинет исследователя">
   <title>Атлас Познания — Кабинет Исследователя</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Literata:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="wood-grain" aria-hidden="true"></div>
-  <main class="desktop-frame">
-    <div class="side-ornament left-ornament" aria-hidden="true"><span>✧</span><i></i><span>❧</span></div>
-    <section class="app-stage" aria-label="Атлас Познания">
-      <div class="screen-wrap" id="screenWrap">
-        <img class="screen-image" id="screenImage" alt="Главная страница Атласа Познания — кабинет исследователя">
-        <div class="loading-status" id="loadingStatus">Открываем Атлас Познания…</div>
-        <div class="hotspots" id="hotspots" aria-label="Интерактивные элементы страницы"></div>
-      </div>
-    </section>
-    <div class="side-ornament right-ornament" aria-hidden="true"><span>✥</span><i></i><span>✧</span></div>
-  </main>
-
-  <div class="drawer-scrim" id="drawerScrim"></div>
-  <aside class="drawer" id="drawer" aria-hidden="true" aria-label="Навигация">
-    <div class="drawer-head"><span>Кабинет Исследователя</span><button id="closeDrawer" aria-label="Закрыть меню">×</button></div>
-    <div class="drawer-caption">КАРТА ЗНАНИЙ</div>
-    <button data-page="home">⌂ <span>Главная</span></button>
-    <button data-page="map">⌘ <span>Карта исследований</span></button>
-    <div class="drawer-caption">НАПРАВЛЕНИЯ</div>
-    <button data-page="tarot">♧ <span>Таро</span></button>
-    <button data-page="astrology">☉ <span>Астрология</span></button>
-    <button data-page="psychology">❋ <span>Психология</span></button>
-    <button data-page="profiling">◎ <span>Профайлинг</span></button>
-    <button data-page="nlp">☷ <span>NLP</span></button>
-    <button data-page="numerology">123 <span>Нумерология</span></button>
-    <button data-page="dreams">☾ <span>Сновидения</span></button>
-    <button data-page="lab">⚗ <span>Лаборатория</span></button>
-    <div class="drawer-caption">СООБЩЕСТВО</div>
-    <button data-page="arena">⚔ <span>Арена Знаний</span></button>
-    <button data-page="themes">☼ <span>Темы оформления</span></button>
-    <div class="drawer-foot">«Познай себя — и открой новые миры»</div>
-  </aside>
-
-  <section class="modal-backdrop" id="modalBackdrop" role="presentation" hidden>
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <button class="modal-close" id="modalClose" aria-label="Закрыть">×</button>
-      <div class="modal-flourish">✧</div>
-      <h2 id="modalTitle">Раздел</h2>
-      <div id="modalBody"></div>
+  <div class="ambient-grain" aria-hidden="true"></div>
+  <div class="stage" id="stage">
+    <div class="workspace" id="workspace">
+      <aside class="desktop-nav" aria-label="Основная навигация">
+        <div class="desk-brand"><span class="brand-seal">✧</span><div><b>Атлас Познания</b><small>КАБИНЕТ ИССЛЕДОВАТЕЛЯ</small></div></div>
+        <div class="desk-section-label">ПРОСТРАНСТВО ЗНАНИЙ</div>
+        <nav class="desk-menu" id="desktopMenu">
+          <button data-nav="home" class="active"><span>⌂</span><b>Главная</b></button>
+          <button data-nav="map"><span>⌘</span><b>Карта исследований</b></button>
+          <div class="desk-separator"></div>
+          <div class="desk-section-label">НАПРАВЛЕНИЯ</div>
+          <button data-nav="tarot"><span>♧</span><b>Таро</b></button>
+          <button data-nav="astrology"><span>☉</span><b>Астрология</b></button>
+          <button data-nav="psychology"><span>❋</span><b>Психология</b></button>
+          <button data-nav="dreams"><span>☾</span><b>Сновидения</b></button>
+          <button data-nav="arena"><span>⚔</span><b>Арена знаний</b></button>
+          <button data-nav="themes"><span>♜</span><b>Темы оформления</b></button>
+        </nav>
+        <div class="desk-footer"><span>✦</span><p>«Познай себя —<br>и откроешь новые миры»</p><small>ВЕРСИЯ 0.2 · АТЛАС</small></div>
+      </aside>
+      <main class="device" aria-label="Экран приложения Атлас Познания">
+        <div class="device-topline"><span class="device-indicator"></span><span id="devicePageName">Главная</span><span class="device-status">КАБИНЕТ ИССЛЕДОВАТЕЛЯ</span></div>
+        <div class="loading" id="loading"><span class="loading-mark">✧</span><b>Атлас Познания</b><small>Подготавливаем кабинет исследователя…</small></div>
+        <div id="screens" class="screens" aria-live="polite"></div>
+        <div class="error" id="error" hidden><b>Не удалось загрузить изображения</b><p id="errorText">Проверь подключение и обнови страницу.</p></div>
+        <div class="modal-backdrop" id="modal" hidden>
+          <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <button class="modal-close" id="modalClose" aria-label="Закрыть">×</button>
+            <div class="modal-ornament">✧</div><h2 id="modalTitle"></h2><div id="modalBody"></div>
+            <button class="modal-action" id="modalOk">Понятно</button>
+          </section>
+        </div>
+      </main>
+      <aside class="context-panel" aria-label="Исследовательский блок">
+        <div class="context-heading"><span>✧</span><small>РАБОЧЕЕ ПРОСТРАНСТВО</small></div>
+        <section class="context-card current-card"><div class="context-kicker">ТЕКУЩИЙ РАЗДЕЛ</div><h2 id="contextTitle">Главная</h2><p id="contextDescription">Личное пространство для исследования символов, знаний и взаимосвязей.</p><div class="context-divider"></div><div class="context-meta"><span>✦</span><span id="contextStatus">Кабинет открыт</span></div></section>
+        <section class="context-card notebook-card"><div class="notebook-pin"></div><div class="context-kicker">ЗАМЕТКА ИССЛЕДОВАТЕЛЯ</div><h3>Вопрос дня</h3><p id="dailyQuestion">Как разные системы символов помогают увидеть одну и ту же ситуацию с новых сторон?</p><div class="note-signature">Личный журнал · № 001</div></section>
+        <section class="context-card quick-card"><div class="context-kicker">БЫСТРЫЙ ДОСТУП</div><button data-nav="tarot"><span>♧</span> Карта дня</button><button data-nav="map"><span>⌘</span> Карта исследований</button><button data-nav="arena"><span>⚔</span> Арена знаний</button></section>
+        <div class="context-footer">✧ <span>Знание начинается с вопроса</span></div>
+      </aside>
     </div>
-  </section>
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="app-data.js"></script>
+  </div>
   <script src="app.js"></script>
 </body>
 </html>
