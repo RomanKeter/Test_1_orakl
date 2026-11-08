@@ -28,7 +28,7 @@ function goBack(){if(navigationStack.length>1)navigationStack.pop();renderPage(n
 
 const ATLAS_DATA = window.ATLAS_DATA || {};
 const STORAGE_KEY = 'atlas-knowledge-v1';
-const baseState = { theme:'cabinet', tarotNotes:[], spreads:[], customSpreads:[], dreams:[], emotions:[], thoughts:[], projects:[], duelHistory:[], astroProfile:null, synastry:null, relocation:[], profilingNotes:[], researchNotes:[], psychChecks:{}, deck:'Классика Уэйта' };
+const baseState = { theme:'cabinet', tarotNotes:[], spreads:[], customSpreads:[], dreams:[], emotions:[], thoughts:[], projects:[], duelHistory:[], astroProfile:null, synastry:null, relocation:[], profilingNotes:[], researchNotes:[], psychChecks:{'Эмоции':true,'Мышление':true,'Поведение':true,'Убеждения':true,'Привязанность':true}, deck:'Классика Уэйта' };
 function loadUserState(){
   try{
     const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');
