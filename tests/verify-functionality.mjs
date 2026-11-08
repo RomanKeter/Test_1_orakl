@@ -59,6 +59,17 @@ try{
   await page.locator('#modalBody button[type="submit"]').click();
   assert.equal((await saved()).astroProfile.place,'Помошная, Украина','Astrology profile should persist');
   await closeModal();
+  await clickHotspot('astrology','Синастрия');
+  await page.locator('#modalBody input[name="personA"]').fill('Алексей');
+  await page.locator('#modalBody input[name="dateA"]').fill('1985-04-12');
+  await page.locator('#modalBody input[name="personB"]').fill('Лиана');
+  await page.locator('#modalBody input[name="dateB"]').fill('1987-09-03');
+  await page.locator('#modalBody button[type="submit"]').click();
+  assert.equal((await saved()).synastry.personA,'Алексей','Synastry profiles should persist');
+  await closeModal();
+  await clickHotspot('astrology','Транзиты');
+  assert.match(await page.locator('#modalTitle').textContent(),/Транзиты/);
+  await closeModal();
 
   // Psychology: checklist persistence and emotion diary.
   await page.locator('.screen[data-page="astrology"] .hit[aria-label="Назад"]').click();
@@ -72,6 +83,29 @@ try{
   await page.locator('#modalBody button[type="submit"]').click();
   assert.equal((await saved()).emotions.length,1,'Emotion note should be stored locally');
   await closeModal();
+  await clickHotspot('psychology','Тесты');
+  await page.locator('[data-quiz-option="1"]').click();
+  assert.equal(await page.locator('.atlas-feedback').count(),1,'Psychology quiz should provide feedback');
+  await closeModal();
+  await clickHotspot('psychology','Техники (КБТ)');
+  await page.locator('#modalBody textarea[name="situation"]').fill('Коллега перенёс встречу.');
+  await page.locator('#modalBody textarea[name="thought"]').fill('Всё идёт плохо.');
+  await page.locator('#modalBody textarea[name="evidence"]').fill('Встречу перенесли один раз.');
+  await page.locator('#modalBody textarea[name="alternative"]').fill('Встречу можно провести позже.');
+  await page.locator('#modalBody button[type="submit"]').click();
+  assert.equal((await saved()).thoughts.length,1,'CBT thought record should persist');
+  await closeModal();
+  await clickHotspot('psychology','Когнитивные искажения');
+  await page.locator('#modalBody [data-modal-action="distortion"]').first().click();
+  assert.match(await page.locator('#modalBody').textContent(),/промежуточные варианты/);
+  await closeModal();
+  await clickHotspot('psychology','Проекты развития');
+  await page.locator('#modalBody input[name="title"]').fill('Читать 10 минут ежедневно');
+  await page.locator('#modalBody button[type="submit"]').click();
+  assert.equal((await saved()).projects.length,1,'Development goal should be saved');
+  await page.locator('#modalBody [data-project-id]').check();
+  assert.equal((await saved()).projects[0].done,true,'Project completion should persist');
+  await closeModal();
 
   // Dreams: create a journal entry and verify it appears in the saved list.
   await page.locator('.screen[data-page="psychology"] .hit[aria-label="Назад"]').click();
@@ -84,6 +118,20 @@ try{
   await page.locator('#modalBody button[type="submit"]').click();
   assert.equal((await saved()).dreams.length,1,'Dream entry should be stored locally');
   assert.match(await page.locator('#modalBody').textContent(),/Город над облаками/);
+  await closeModal();
+  await clickHotspot('dreams','Записать сон');
+  await page.locator('#modalBody input[name="title"]').fill('Вода в старом городе');
+  await page.locator('#modalBody textarea[name="text"]').fill('Я шёл по улице рядом с водой.');
+  await page.locator('#modalBody input[name="symbols"]').fill('вода, город');
+  await page.locator('#modalBody button[type="submit"]').click();
+  assert.equal((await saved()).dreams.length,2,'Second dream should be saved');
+  await closeModal();
+  await clickHotspot('dreams','Повторы');
+  assert.match(await page.locator('#modalBody').textContent(),/вода — 2 раза/);
+  await closeModal();
+  await clickHotspot('dreams','Символы');
+  await page.locator('#dreamSymbolSearch').fill('вода');
+  assert.match(await page.locator('#dreamSymbolList').textContent(),/Эмоции, перемены/);
   await closeModal();
 
   // Themes: selection changes the active theme and survives a reload.
@@ -107,10 +155,32 @@ try{
   assert.equal((await saved()).duelHistory.length,1,'Duel answer should be recorded');
   assert.match(await page.locator('#modalTitle').textContent(),/Ответ принят/);
   await closeModal();
+  await page.locator('.screen[data-page="arena"] .hit[aria-label="Назад"]').click();
+  await clickHotspot('home','Профайлинг');
+  await page.locator('#modalBody textarea[name="text"]').fill('Наблюдаемые факты записаны отдельно от предположений.');
+  await page.locator('#modalBody button[type="submit"]').click();
+  assert.equal((await saved()).profilingNotes.length,1,'Profiling case notes should persist');
+  await closeModal();
+  await clickHotspot('home','NLP');
+  await page.locator('#modalBody textarea[name="text"]').fill('Ты всегда меня не слушаешь.');
+  await page.locator('#modalBody button[type="submit"]').click();
+  assert.match(await page.locator('#modalBody').textContent(),/Возможный вариант/);
+  await closeModal();
+  await clickHotspot('home','Нумерология');
+  await page.locator('#modalBody input[name="date"]').fill('1984-07-16');
+  await page.locator('#modalBody button[type="submit"]').click();
+  assert.match(await page.locator('#modalTitle').textContent(),/расчёт/);
+  await closeModal();
+  await clickHotspot('home','Лаборатория');
+  await page.locator('#modalBody input[name="title"]').fill('Символ воды в разных системах');
+  await page.locator('#modalBody textarea[name="text"]').fill('Сравнить водную символику в Таро и сновидениях.');
+  await page.locator('#modalBody button[type="submit"]').click();
+  assert.equal((await saved()).researchNotes.length,1,'Research question should persist');
+  await closeModal();
 
   // Browser runtime should remain free of uncaught errors.
   assert.deepEqual(pageErrors,[],'No uncaught browser errors');
-  console.log('PASS: tarot spreads, card notes, exam flow, astrology profile, psychology checklist and emotion log, dream journal, persistent themes, arena answer and browser runtime.');
+  console.log('PASS: tarot spreads/notes/exam, astrology natal and synastry, psychology tests/CBT/projects, dream journal/symbols/repeats, persistent themes, arena, profiling, NLP, numerology, laboratory and browser runtime.');
 }catch(error){
   console.error(error);
   process.exitCode=1;
