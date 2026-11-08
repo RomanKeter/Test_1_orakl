@@ -1,60 +1,213 @@
-(() => {
-'use strict';
-const names=['home','map','tarot','astrology','psychology','dreams','arena','themes'];
-const pages={home:{w:290,h:617},map:{w:291,h:617},tarot:{w:291,h:617},astrology:{w:315,h:617},psychology:{w:290,h:689},dreams:{w:291,h:689},arena:{w:291,h:689},themes:{w:315,h:689}};
-const trims={psychology:{left:0,top:16},dreams:{left:0,top:16},arena:{left:14,top:16},themes:{left:18,top:16}};
-const screens=document.getElementById('screens'),loading=document.getElementById('loading'),error=document.getElementById('error');
-const urls={};let current='home';const navigationStack=['home'];
-const pct=(page,x,y,w,h)=>{const p=pages[page],c=trims[page]||{left:0,top:0},x1=Math.max(x,c.left),y1=Math.max(y,c.top),x2=Math.min(x+w,p.w),y2=Math.min(y+h,p.h),cw=p.w-c.left,ch=p.h-c.top;return{left:(x1-c.left)/cw*100,top:(y1-c.top)/ch*100,width:Math.max(0,x2-x1)/cw*100,height:Math.max(0,y2-y1)/ch*100};};
-const hotspot=(page,label,x,y,w,h,action)=>({page,label,...pct(page,x,y,w,h),action});
-const map={
-home:[hotspot('home','Открыть меню',5,26,36,48,'menu'),hotspot('home','Уведомления',237,22,48,48,'notifications'),...['tarot','astrology','psychology','info:Профайлинг','info:NLP','info:Нумерология','dreams','info:Лаборатория'].map((id,i)=>hotspot('home',id.replace('info:',''),12,[178,222,263,303,344,385,426,467][i],264,39,id.startsWith('info:')?id:'go:'+id)),...['Главная','Обучение','Арена','Сообщество','Профиль'].map((label,i)=>hotspot('home',label,i*58,527,58,88,['go:home','go:map','go:arena','info:Сообщество','info:Профиль'][i]))],
-map:[hotspot('map','Назад',0,0,54,64,'back'),hotspot('map','Таро',102,74,94,112,'go:tarot'),hotspot('map','Астрология',8,160,113,125,'go:astrology'),hotspot('map','Психология',175,158,108,125,'go:psychology'),hotspot('map','Профайлинг',6,277,113,130,'info:Профайлинг'),hotspot('map','NLP',178,274,105,132,'info:NLP'),hotspot('map','Нумерология',30,394,112,119,'info:Нумерология'),hotspot('map','Сновидения',165,390,113,121,'go:dreams'),hotspot('map','Лаборатория',20,511,253,99,'info:Лаборатория')],
-tarot:[hotspot('tarot','Назад',0,0,53,65,'back'),...['Обучение','Практика','Колоды'].map((t,i)=>hotspot('tarot',t,25+i*88,79,88,42,'tab:'+t)),hotspot('tarot','Карта Звезда',10,136,170,247,'card:star'),...['Значение','Символика','Сочетания','Практика','Заметки'].map((t,i)=>hotspot('tarot',t,180,157+i*39,108,37,'info:'+t)),...['Расклады','Экзамен','Дуэли','Конструктор','Библиотека','Дневник'].map((t,i)=>hotspot('tarot',t,5+(i%3)*96,400+Math.floor(i/3)*100,92,92,'info:'+t))],
-astrology:[hotspot('astrology','Назад',0,0,54,64,'back'),...['Натал','Транзиты','Прогноз','Синастрия'].map((t,i)=>hotspot('astrology',t,31+i*68,82,66,40,'tab:'+t)),hotspot('astrology','Натальная карта',28,129,258,264,'info:Натальная карта'),...['Анализ карты','Дома','Аспекты','Релокация','Календарь','Обучение'].map((t,i)=>hotspot('astrology',t,18+(i%3)*100,402+Math.floor(i/3)*101,92,95,'info:'+t))],
-psychology:[hotspot('psychology','Назад',0,0,52,61,'back'),...['Самопознание','Отношения','Практики'].map((t,i)=>hotspot('psychology',t,10+i*95,108,95,42,'tab:'+t)),...['Эмоции','Мышление','Поведение','Убеждения','Привязанность'].map((t,i)=>hotspot('psychology',t,185,172+i*31,100,27,'toggle:'+t)),...['Тесты','Упражнения','Дневник эмоций','Когнитивные искажения','Техники (КБТ)','Проекты развития'].map((t,i)=>hotspot('psychology',t,4+(i%3)*96,396+Math.floor(i/3)*85,92,82,'info:'+t))],
-dreams:[hotspot('dreams','Назад',0,0,50,62,'back'),hotspot('dreams','Дневник снов',5,270,280,160,'info:Дневник снов'),...['Записать сон','Толкование','Повторы','Символы','Анализ психики','Карта снов'].map((t,i)=>hotspot('dreams',t,4+(i%3)*96,430+Math.floor(i/3)*82,92,82,'info:'+t))],
-arena:[hotspot('arena','Назад',0,0,50,60,'back'),...['Дуэль','Турнир','Лига','Гильдии'].map((t,i)=>hotspot('arena',t,25+i*70,85,66,38,'tab:'+t)),hotspot('arena','Войти в дуэль',22,500,247,55,'duel'),...['Рейтинг','История','Правила'].map((t,i)=>hotspot('arena',t,[26,122,224][i],556,[90,98,67][i],82,'info:'+t))],
-themes:[hotspot('themes','Назад',32,48,38,38,'back'),...['Магическая Академия','Кибер-Лаборатория','Кабинет Исследователя','Восточный Сад','Океан Глубин','Минимализм'].map((t,i)=>hotspot('themes',t,34,96+i*80,270,72,'theme:'+t))]
-};
-const details={
-'card:star':['XVII — Звезда','Надежда, восстановление, вдохновение и доверие к будущему. В учебной трактовке карта предлагает заметить ресурс, который помогает восстановиться после непростого периода.'],
-'Расклады':['Расклады Таро','Демо-библиотека раскладов: «Три карты», «Кельтский крест», «Выбор пути». Выбери схему — на следующем этапе добавим интерактивное размещение карт.'],
-'Экзамен':['Экзамен','Временный учебный режим: вопросы по старшим арканам, символике и сочетаниям. Результаты пока демонстрационные.'],
-'Дуэли':['Дуэли','Соревнование двух исследователей: трактовка ситуации, аргументация и оценка ответа.'],
-'Конструктор':['Конструктор раскладов','Здесь можно будет создавать собственные схемы, задавать позиции и сохранять авторские расклады.'],
-'Библиотека':['Библиотека','Колоды, справочники, заметки и учебные материалы будут собраны в одном месте.'],
-'Дневник':['Дневник исследователя','Личные наблюдения, вопросы, результаты раскладов и выводы.'],
-'Профайлинг':['Профайлинг','Учебные кейсы по наблюдению за поведением, стилями коммуникации и проверке гипотез.'],
-'NLP':['NLP','Демонстрационные упражнения по языковым моделям, метафорам и коммуникации.'],
-'Нумерология':['Нумерология','Временный раздел для символических числовых систем, расчётов и заметок.'],
-'Лаборатория':['Междисциплинарная лаборатория','Пространство для объединения Таро, астрологии, психологии и других областей в одном исследовании.']
-};
-function showModal(title,body){document.getElementById('modalTitle').textContent=title;document.getElementById('modalBody').innerHTML=body;document.getElementById('modal').hidden=false;document.getElementById('modalOk').focus();}
-function closeModal(){document.getElementById('modal').hidden=true;}
-function renderPage(id){current=id;document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.dataset.page===id));history.replaceState({page:id},'','#'+id);window.scrollTo({top:0,behavior:'smooth'});}
-function navigate(id){if(!pages[id])return;if(id!==current)navigationStack.push(id);renderPage(id);}
-function goBack(){if(navigationStack.length>1)navigationStack.pop();renderPage(navigationStack[navigationStack.length-1]||'home');}
-function handleAction(action,el){
-if(action.startsWith('go:'))return navigate(action.slice(3));
-if(action==='back')return goBack();
-if(action==='menu')return showModal('Кабинет исследователя','<p>Выбери направление:</p><ul>'+names.map(n=>'<li><a href="#'+n+'" data-modal-go="'+n+'">'+label(n)+'</a></li>').join('')+'</ul>');
-if(action==='notifications')return showModal('Уведомления','<p>Новых уведомлений пока нет. Здесь появятся напоминания, приглашения и события сообщества.</p>');
-if(action==='duel')return showModal('Вход в дуэль','<p>Демонстрационная дуэль «Отношения в раскладе Таро». Подключение игроков и синхронизацию раундов добавим позже.</p>');
-if(action.startsWith('tab:')){el.parentElement.querySelectorAll('.hit').forEach(h=>{if(h.dataset.action.startsWith('tab:'))h.classList.remove('selected-hotspot')});el.classList.add('selected-hotspot');return showModal(el.getAttribute('aria-label'),'Это вкладка раздела. Сейчас показан исходный экран макета; содержимое остальных вкладок добавим по мере разработки.');}
-if(action.startsWith('theme:')){document.querySelectorAll('[data-action^="theme:"]').forEach(h=>h.classList.remove('selected-hotspot'));el.classList.add('selected-hotspot');return showModal('Тема оформления выбрана','<p>Выбрана тема «'+action.slice(6)+'». В текущем макете это демонстрационное переключение; отдельные визуальные темы будут подключены позднее.</p>');}
-if(action.startsWith('toggle:')){el.classList.toggle('selected-hotspot');return showModal(el.getAttribute('aria-label'),'Пункт добавлен в наблюдаемые темы. Здесь позднее появятся настройки и динамические результаты.');}
-if(action.startsWith('card:'))return showModal(details[action][0],details[action][1]);
-if(action.startsWith('info:')){const key=action.slice(5),d=details[key]||[key,'Демонстрационный раздел «'+key+'». Сюда добавим реальные данные, упражнения и инструменты на следующем этапе.'];return showModal(d[0],'<p>'+d[1]+'</p>');}
+function render(id, push=true){
+  const page=pages[id];
+  if(!page){showFeature(id);return;}
+  if(push && state.current!==id) state.routeStack.push(id);
+  state.current=id;
+  const image=$('#screenImage');
+  image.src=page.image; image.alt=page.alt;
+  const shortScreens=['home','map','tarot','astrology'];
+  $('#screenWrap').dataset.ratio=shortScreens.includes(id)?'short':'tall';
+  const layer=$('#hotspots'); layer.replaceChildren();
+  page.areas.forEach(([label,x,y,w,h,action])=>{
+    const b=document.createElement('button');
+    b.type='button'; b.className='hotspot'; b.setAttribute('aria-label',label); b.title=label;
+    b.style.left=x+'%';b.style.top=y+'%';b.style.width=w+'%';b.style.height=h+'%';
+    b.dataset.action=action;
+    if(action.startsWith('toggle:')) b.setAttribute('aria-pressed',String(state.checks[label]??true));
+    layer.append(b);
+  });
+  if(id==='themes') updateThemeMarker();
+  if(push){history.pushState({page:id},'',`#${id}`);}
+  closeDrawer(); closeModal();
 }
-function label(id){return({home:'Главная',map:'Карта исследований',tarot:'Таро',astrology:'Астрология',psychology:'Психология',dreams:'Сновидения',arena:'Арена знаний',themes:'Темы оформления',profiling:'Профайлинг',nlp:'NLP',numerology:'Нумерология',lab:'Лаборатория'})[id]||id;}
-function build(){names.forEach(name=>{const section=document.createElement('section');section.className='screen'+(name==='home'?' active':'');section.dataset.page=name;const img=document.createElement('img');img.className='screen-art';img.alt=label(name)+' — экран Атласа Познания';img.draggable=false;img.src=urls[name];const layers=document.createElement('div');layers.className='hotspots';(map[name]||[]).forEach(def=>{const b=document.createElement('button');b.type='button';b.className='hit';b.style.left=def.left+'%';b.style.top=def.top+'%';b.style.width=def.width+'%';b.style.height=def.height+'%';b.dataset.action=def.action;b.setAttribute('aria-label',def.label);b.title=def.label;layers.appendChild(b)});section.append(img,layers);screens.appendChild(section)});screens.classList.add('ready');loading.hidden=true;const hash=location.hash.slice(1);if(pages[hash]){navigationStack.push(hash);renderPage(hash);}}
-async function inflateRaw(bytes){if(typeof DecompressionStream==='undefined')throw new Error('Браузер не поддерживает распаковку ZIP.');const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'));return await new Response(stream).arrayBuffer();}
-async function extractZip(buffer){const v=new DataView(buffer);let eocd=-1;for(let p=buffer.byteLength-22;p>=Math.max(0,buffer.byteLength-65557);p--){if(v.getUint32(p,true)===0x06054b50){eocd=p;break}}if(eocd<0)throw new Error('В архиве не найдена центральная ZIP-директория.');const count=v.getUint16(eocd+10,true);let p=v.getUint32(eocd+16,true);const out={};for(let i=0;i<count;i++){if(v.getUint32(p,true)!==0x02014b50)throw new Error('Повреждена запись ZIP-архива.');const method=v.getUint16(p+10,true),packed=v.getUint32(p+20,true),nameLen=v.getUint16(p+28,true),extraLen=v.getUint16(p+30,true),commentLen=v.getUint16(p+32,true),local=v.getUint32(p+42,true);const name=new TextDecoder().decode(new Uint8Array(buffer,p+46,nameLen));if(name.startsWith('assets/')&&name.endsWith('.webp')){const localName=v.getUint16(local+26,true),localExtra=v.getUint16(local+28,true),start=local+30+localName+localExtra,raw=buffer.slice(start,start+packed),data=method===0?raw:method===8?await inflateRaw(raw):null;if(!data)throw new Error('Неизвестный метод сжатия в ZIP.');out[name.split('/').pop().replace('.webp','')]=URL.createObjectURL(new Blob([data],{type:'image/webp'}));}p+=46+nameLen+extraLen+commentLen;}if(names.some(n=>!out[n]))throw new Error('В архиве отсутствует одно или несколько изображений экранов.');return out;}
-async function trimReferenceScreens(){for(const [name,crop] of Object.entries(trims)){const img=new Image();img.src=urls[name];await img.decode();const sx=Math.round(crop.left*img.naturalWidth/pages[name].w),sy=Math.round(crop.top*img.naturalHeight/pages[name].h),cw=img.naturalWidth-sx,ch=img.naturalHeight-sy,canvas=document.createElement('canvas');canvas.width=cw;canvas.height=ch;const ctx=canvas.getContext('2d');ctx.drawImage(img,sx,sy,cw,ch,0,0,cw,ch);const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/webp',0.96));if(blob){const old=urls[name];urls[name]=URL.createObjectURL(blob);if(old.startsWith('blob:'))URL.revokeObjectURL(old);}}}
-if(window.__ATLAS_TEST)window.__ATLAS_DEBUG={navigate,goBack};
-async function load(){try{if(window.__ATLAS_IMAGE_DATA)Object.assign(urls,window.__ATLAS_IMAGE_DATA);else if(window.__ATLAS_ZIP_DATA){const binary=atob(window.__ATLAS_ZIP_DATA),bytes=new Uint8Array(binary.length);for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);Object.assign(urls,await extractZip(bytes.buffer));}else if(location.protocol==='file:'||location.hostname==='localhost'||location.hostname==='127.0.0.1'){for(const n of names)urls[n]='assets/'+n+'.webp';}else{const response=await fetch('./atlas-reference-assets.zip',{cache:'no-store'});if(!response.ok)throw new Error('Архив изображений не найден (HTTP '+response.status+').');Object.assign(urls,await extractZip(await response.arrayBuffer()));}await trimReferenceScreens();build();}catch(e){loading.hidden=true;error.hidden=false;document.getElementById('errorText').textContent=e.message;console.error(e);}}
-screens.addEventListener('click',e=>{const target=e.target.closest('.hit');if(target)handleAction(target.dataset.action,target);});
-document.getElementById('modalClose').addEventListener('click',closeModal);document.getElementById('modalOk').addEventListener('click',closeModal);document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal();});document.addEventListener('click',e=>{const a=e.target.closest('[data-modal-go]');if(a){e.preventDefault();closeModal();navigate(a.dataset.modalGo);}});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
-load();
-})();
+
+function goBack(){
+  if(state.routeStack.length>1) state.routeStack.pop();
+  const target=state.routeStack[state.routeStack.length-1]||'home';
+  render(target,false);
+  history.replaceState({page:target},'',`#${target}`);
+}
+
+function updateThemeMarker(){
+  const layer=$('#hotspots');
+  layer.querySelectorAll('.theme-marker').forEach(node=>node.remove());
+  // The reference artwork already shows Cabinet as the selected theme. Do not
+  // paint a second check over it on the initial/default state.
+  if(state.theme==='cabinet') return;
+  const positions={magic:18.5,cyber:30.5,cabinet:42.5,garden:54.5,ocean:66.5,minimal:78.5};
+  const reset=document.createElement('span');
+  reset.className='theme-marker clear'; reset.setAttribute('aria-hidden','true');
+  reset.style.top=positions.cabinet+'%'; reset.textContent=''; layer.append(reset);
+  const marker=document.createElement('span');
+  marker.className='theme-marker'; marker.setAttribute('aria-hidden','true');
+  marker.style.top=(positions[state.theme]??positions.cabinet)+'%';
+  marker.textContent='✓'; layer.append(marker);
+}
+
+async function unzipReferenceAssets(buffer){
+  const bytes=new Uint8Array(buffer);
+  const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
+  const wanted=new Set(Object.values(pages).map(page=>page.image));
+  const found=new Map();
+  let offset=0;
+  while(offset+30<=bytes.length && view.getUint32(offset,true)===0x04034b50){
+    const flags=view.getUint16(offset+6,true);
+    const method=view.getUint16(offset+8,true);
+    const compressedSize=view.getUint32(offset+18,true);
+    const uncompressedSize=view.getUint32(offset+22,true);
+    const nameLength=view.getUint16(offset+26,true);
+    const extraLength=view.getUint16(offset+28,true);
+    if(flags & 0x08) throw new Error('ZIP uses a streaming data descriptor; please re-create the archive with a standard ZIP exporter.');
+    if(flags & 0x01) throw new Error('ZIP archive is encrypted.');
+    const nameStart=offset+30;
+    const name=new TextDecoder().decode(bytes.subarray(nameStart,nameStart+nameLength));
+    const dataStart=nameStart+nameLength+extraLength;
+    const dataEnd=dataStart+compressedSize;
+    if(dataEnd>bytes.length) throw new Error('ZIP archive is truncated.');
+    if(wanted.has(name)){
+      const compressed=bytes.subarray(dataStart,dataEnd);
+      let decoded;
+      if(method===0) decoded=compressed.slice();
+      else if(method===8){
+        if(typeof DecompressionStream==='undefined') throw new Error('This browser does not support ZIP decompression. Please update the browser.');
+        const stream=new Blob([compressed]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+        decoded=new Uint8Array(await new Response(stream).arrayBuffer());
+      } else throw new Error('Unsupported ZIP compression method: '+method);
+      if(decoded.byteLength!==uncompressedSize) throw new Error('The reference image '+name+' did not decompress correctly.');
+      const cropSpec={
+        'assets/home.webp':      {sx:0,sy:0,sw:290,sh:617,w:290,h:617},
+        'assets/map.webp':       {sx:0,sy:0,sw:291,sh:617,w:291,h:617},
+        'assets/tarot.webp':     {sx:0,sy:0,sw:291,sh:617,w:291,h:617},
+        'assets/astrology.webp': {sx:22,sy:0,sw:291,sh:617,w:291,h:617},
+        'assets/psychology.webp':{sx:0,sy:17,sw:290,sh:672,w:290,h:672},
+        'assets/dreams.webp':    {sx:0,sy:17,sw:291,sh:672,w:291,h:672},
+        'assets/arena.webp':     {sx:11,sy:7,sw:280,sh:682,w:280,h:682},
+        'assets/themes.webp':    {sx:22,sy:7,sw:291,sh:682,w:291,h:682}
+      };
+      const spec=cropSpec[name];
+      const bitmap=await createImageBitmap(new Blob([decoded],{type:'image/webp'}));
+      const canvas=document.createElement('canvas');
+      canvas.width=spec.w; canvas.height=spec.h;
+      const context=canvas.getContext('2d',{alpha:false});
+      const sx=Math.min(spec.sx,Math.max(0,bitmap.width-1));
+      const sy=Math.min(spec.sy,Math.max(0,bitmap.height-1));
+      const sw=Math.min(spec.sw,bitmap.width-sx);
+      const sh=Math.min(spec.sh,bitmap.height-sy);
+      context.drawImage(bitmap,sx,sy,sw,sh,0,0,spec.w,spec.h);
+      bitmap.close?.();
+      const cropped=await new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('Could not crop '+name)),'image/webp',0.96));
+      found.set(name,URL.createObjectURL(cropped));
+    }
+    offset=dataEnd;
+  }
+  const missing=[...wanted].filter(name=>!found.has(name));
+  if(missing.length){
+    for(const url of found.values()) URL.revokeObjectURL(url);
+    throw new Error('The reference archive is missing: '+missing.join(', '));
+  }
+  return found;
+}
+
+async function boot(){
+  const status=$('#loadingStatus');
+  try{
+    const response=await fetch(new URL('atlas-reference-assets.zip',document.baseURI),{cache:'no-cache'});
+    if(!response.ok) throw new Error('Cannot load atlas-reference-assets.zip (HTTP '+response.status+').');
+    imageUrls=await unzipReferenceAssets(await response.arrayBuffer());
+    Object.values(pages).forEach(page=>{page.image=imageUrls.get(page.image);});
+    const initial=location.hash.slice(1);
+    state.routeStack=[pages[initial]?initial:'home'];
+    render(state.routeStack[0],false);
+    status?.remove();
+    document.body.dataset.theme=state.theme;
+  }catch(error){
+    console.error('Atlas startup failed:',error);
+    if(status) status.innerHTML='Не удалось загрузить иллюстрации Атласа.<br><small>Проверь, что atlas-reference-assets.zip находится в корне репозитория рядом с index.html.</small>';
+  }
+}
+function showFeature(name){
+  const copy=featureDescriptions[name]||'Этот раздел будет развиваться в следующих итерациях приложения.';
+  openModal(name,`<p>${copy}</p><p class="modal-muted">Сейчас это временная демонстрационная версия.</p>`);
+}
+function openModal(title,body){
+  $('#modalTitle').textContent=title;
+  $('#modalBody').innerHTML=body;
+  $('#modalBackdrop').hidden=false;
+  $('#modalClose').focus();
+}
+function closeModal(){ $('#modalBackdrop').hidden=true; }
+function closeDrawer(){ $('#drawer').classList.remove('open'); $('#drawerScrim').classList.remove('open'); $('#drawer').setAttribute('aria-hidden','true'); }
+function showDrawer(){ $('#drawer').classList.add('open'); $('#drawerScrim').classList.add('open'); $('#drawer').setAttribute('aria-hidden','false'); }
+let toastTimer;
+
+function fitScreen(){
+  const image=$('#screenImage');
+  const wrap=$('#screenWrap');
+  if(!image || !wrap || !image.naturalWidth || !image.naturalHeight) return;
+  const ratio=image.naturalWidth/image.naturalHeight;
+  const availableHeight=Math.max(260,window.innerHeight-(window.innerWidth<=700?14:40));
+  const widthLimit=window.innerWidth<=700?window.innerWidth:460;
+  const width=Math.max(220,Math.min(widthLimit,availableHeight*ratio));
+  wrap.style.width=width+'px';
+}
+$('#screenImage').addEventListener('load',fitScreen);
+window.addEventListener('resize',fitScreen,{passive:true});
+
+function toast(message){const el=$('#toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2400);}
+function actionClick(action){
+  const [kind,...rest]=action.split(':'); const value=rest.join(':');
+  if(kind==='page') return render(value);
+  if(kind==='menu') return showDrawer();
+  if(kind==='notify') return openModal('Уведомления','<p>Новых уведомлений пока нет.</p><p>Здесь будут появляться сообщения, приглашения и события исследований.</p>');
+  if(kind==='back') return goBack();
+  if(kind==='feature') return showFeature(value);
+  if(kind==='tab'){
+    state.lastTab[state.current]=value;
+    openModal(value,`<p>Открыта вкладка «${value}» в разделе «${pageTitle(state.current)}».</p><p>Содержимое вкладки пока демонстрационное; интерактивные материалы добавим при разработке функционала.</p>`);
+    return;
+  }
+  if(kind==='toggle'){
+    state.checks[value]=!state.checks[value];
+    const control=$(`#hotspots .hotspot[aria-label="${CSS.escape(value)}"]`);
+    control?.setAttribute('aria-pressed',String(state.checks[value]));
+    toast(`${value}: ${state.checks[value]?'отмечено':'снята отметка'}`); return;
+  }
+  if(kind==='theme'){
+    state.theme=value;storage.setItem('atlas-theme',value);document.body.dataset.theme=value;
+    updateThemeMarker();
+    toast(`Тема «${themeTitle(value)}» выбрана`);return;
+  }
+  if(kind==='diary'){
+    const noteKey='atlas-diary:'+value;
+    const saved=storage.getItem(noteKey)||'';
+    openModal(value,`<p>Демонстрационная запись исследователя. Текст сохраняется локально в этом браузере.</p><textarea id="diaryText" placeholder="Запишите наблюдение, сон или заметку…">${escapeHtml(saved)}</textarea><button class="modal-action" id="saveDiary">Сохранить запись</button>`);
+    $('#saveDiary').addEventListener('click',()=>{storage.setItem(noteKey,$('#diaryText').value);closeModal();toast('Запись сохранена на этом устройстве');});
+    return;
+  }
+  if(kind==='duel'){
+    openModal('Вход в дуэль','<p>Вы готовы принять учебный вызов?</p><p><b>Тема:</b> отношения в раскладе Таро.</p><button class="modal-action" id="confirmDuel">Принять вызов</button>');
+    $('#confirmDuel').addEventListener('click',()=>{closeModal();toast('Дуэль принята. Ожидаем второго участника.');});return;
+  }
+  if(kind==='modal'){
+    const copy=modalCopy[value]||`Демонстрационный раздел «${value}». Здесь появится соответствующий инструмент и временные учебные данные.`;
+    openModal(value,`<p>${copy}</p>`);return;
+  }
+}
+function pageTitle(id){return ({home:'Главная',map:'Карта исследований',tarot:'Таро',astrology:'Астрология',psychology:'Психология',dreams:'Сновидения',arena:'Арена Знаний',themes:'Темы оформления'})[id]||id;}
+function themeTitle(id){return ({magic:'Магическая Академия',cyber:'Кибер-Лаборатория',cabinet:'Кабинет Исследователя',garden:'Восточный Сад',ocean:'Океан Глубин',minimal:'Минимализм'})[id]||id;}
+function escapeHtml(value){return value.replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));}
+
+document.addEventListener('click',event=>{
+  const hotspot=event.target.closest('.hotspot');
+  if(hotspot){actionClick(hotspot.dataset.action);return;}
+  const pageButton=event.target.closest('[data-page]');
+  if(pageButton){render(pageButton.dataset.page);return;}
+});
+$('#closeDrawer').addEventListener('click',closeDrawer);
+$('#drawerScrim').addEventListener('click',closeDrawer);
+$('#modalClose').addEventListener('click',closeModal);
+$('#modalBackdrop').addEventListener('click',event=>{if(event.target===$('#modalBackdrop'))closeModal();});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'){closeDrawer();closeModal();}});
+window.addEventListener('popstate',event=>{const id=event.state?.page||location.hash.slice(1)||'home';if(pages[id]){const idx=state.routeStack.lastIndexOf(id);state.routeStack=idx>=0?state.routeStack.slice(0,idx+1):[...state.routeStack,id];render(id,false);}});
+document.body.dataset.theme=state.theme;
+boot();
