@@ -26,6 +26,8 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Run responsive and interaction checks
         run: node tests/verify-layout.mjs
+      - name: Run functional module checks
+        run: node tests/verify-functionality.mjs
       - name: Upload visual previews
         if: always()
         uses: actions/upload-artifact@v4
