@@ -115,14 +115,6 @@ try{
   assert.equal((await saved()).projects[0].done,true,'Project completion should persist');
   await closeModal();
 
-  // Psychology: projects can be completed and the state persists.
-  await clickHotspot('psychology','Проекты развития');
-  await page.locator('#modalBody input[name="title"]').fill('Ежедневная практика');
-  await page.locator('#modalBody button[type="submit"]').click();
-  assert.equal((await saved()).projects.length,1,'Project should be created');
-  await page.locator('#modalBody input[data-project-id]').check();
-  assert.equal((await saved()).projects[0].done,true,'Project completion should persist');
-
   // Dreams: create a journal entry and verify it appears in the saved list.
   await page.locator('.screen[data-page="psychology"] .hit[aria-label="Назад"]').click();
   await clickHotspot('home','Сновидения');
