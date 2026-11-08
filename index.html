@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ead7b1">
+  <meta name="description" content="Атлас Познания — кабинет исследователя: Таро, астрология, психология и пространство знаний.">
+  <title>Атлас Познания — Кабинет Исследователя</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Literata:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="paper-grain"></div>
+  <header class="topbar">
+    <button class="icon-button mobile-menu" id="menuToggle" aria-label="Открыть меню">☰</button>
+    <a class="brand" href="#home"><span class="brand-mark">✧</span><span><b>Атлас Познания</b><small>КАБИНЕТ ИССЛЕДОВАТЕЛЯ</small></span></a>
+    <div class="top-actions"><span class="date-note" id="todayNote"></span><button class="icon-button" id="themeToggle" title="Сменить оформление">☼</button><button class="icon-button notification" title="Уведомления">♧<i></i></button><button class="profile-chip" title="Профиль">Р</button></div>
+  </header>
+
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="side-heading">ПРОСТРАНСТВО ЗНАНИЙ</div>
+      <nav class="main-nav">
+        <button class="nav-item active" data-page="home"><span>⌂</span> Главная</button>
+        <button class="nav-item" data-page="map"><span>⌘</span> Карта исследований</button>
+        <div class="nav-divider"></div>
+        <div class="side-heading">НАПРАВЛЕНИЯ</div>
+        <button class="nav-item" data-page="tarot"><span>♧</span> Таро <em>✦</em></button>
+        <button class="nav-item" data-page="astrology"><span>☉</span> Астрология</button>
+        <button class="nav-item" data-page="psychology"><span>♧</span> Психология</button>
+        <button class="nav-item" data-page="dreams"><span>☾</span> Сновидения</button>
+        <button class="nav-item" data-page="profiling"><span>◎</span> Профайлинг</button>
+        <button class="nav-item" data-page="nlp"><span>☷</span> NLP</button>
+        <button class="nav-item" data-page="numerology"><span>№</span> Нумерология</button>
+        <button class="nav-item" data-page="lab"><span>⚗</span> Лаборатория</button>
+      </nav>
+      <div class="sidebar-bottom"><div class="mini-quote">«Познай себя — и откроешь новые миры»</div><small>ВЕРСИЯ 0.1 · ДЕМО</small></div>
+    </aside>
+
+    <main class="main-content">
+      <section class="page active" id="page-home">
+        <div class="hero">
+          <div class="hero-copy"><div class="eyebrow">ВАШЕ ЛИЧНОЕ ПРОСТРАНСТВО</div><h1>Добро пожаловать<br>в Атлас Познания</h1><p>Исследуйте символы, закономерности и глубины человеческого опыта. Ваш путь к знаниям начинается здесь.</p><button class="primary-button" data-go="map">Открыть карту исследований <span>→</span></button></div>
+          <div class="hero-art"><div class="sun-disc"></div><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="hero-book">✧<small>ЗНАНИЕ<br>ЕСТЬ ПУТЬ</small></div><span class="star s1">✦</span><span class="star s2">✧</span><span class="star s3">✦</span></div>
+        </div>
+        <div class="section-heading"><div><div class="eyebrow">НАЧНИТЕ ИССЛЕДОВАНИЕ</div><h2>Ваши направления</h2></div><button class="text-link" data-go="map">Все направления →</button></div>
+        <div class="domain-grid" id="domainGrid"></div>
+        <div class="lower-grid">
+          <article class="panel continue-panel"><div class="panel-top"><div><div class="eyebrow">ПРОДОЛЖИТЬ ПУТЬ</div><h3>Недавние исследования</h3></div><span class="panel-symbol">✧</span></div><div class="recent-item"><div class="recent-icon tarot-icon">✶</div><div><b>Старший аркан XVII — Звезда</b><small>Таро · Значения карт · Сегодня</small></div><button class="round-arrow" data-go="tarot">→</button></div><div class="recent-item"><div class="recent-icon dream-icon">☾</div><div><b>Символика воды во сне</b><small>Сновидения · Толкование · Вчера</small></div><button class="round-arrow" data-go="dreams">→</button></div></article>
+          <article class="panel daily-panel"><div class="eyebrow">МЫСЛЬ ДНЯ</div><div class="daily-mark">“</div><blockquote>Познание начинается не с готового ответа, а с правильно заданного вопроса.</blockquote><small>ИЗ ДНЕВНИКА ИССЛЕДОВАТЕЛЯ</small></article>
+        </div>
+      </section>
+
+      <section class="page" id="page-map">
+        <div class="page-title"><div class="eyebrow">СВЯЗИ И ПЕРЕСЕЧЕНИЯ</div><h1>Карта исследований</h1><p>Все области знания связаны между собой. Выберите направление, чтобы начать путь.</p></div>
+        <div class="map-board"><div class="map-lines"></div><div class="map-center"><span>✧</span><b>АТЛАС<br>ПОЗНАНИЯ</b><small>ЕДИНСТВО ЗНАНИЙ</small></div><div class="map-nodes" id="mapNodes"></div></div>
+        <div class="map-footer"><span>✦ Каждая область открывает новые связи</span><button class="outline-button" data-go="lab">Междисциплинарная лаборатория →</button></div>
+      </section>
+
+      <section class="page" id="page-tarot">
+        <div class="page-title"><div class="eyebrow">АРХЕТИПЫ · СИМВОЛЫ · ИНТУИЦИЯ</div><h1>Таро</h1><p>Изучайте язык образов, тренируйте интерпретацию и ведите собственные расклады.</p></div>
+        <div class="tabs" data-tabs="tarot"><button class="selected">Обучение</button><button>Практика</button><button>Колоды</button></div>
+        <div class="feature-layout"><article class="tarot-feature"><div class="tarot-card-art"><div class="card-number">XVII</div><div class="star-crown">✦</div><div class="star-person">♙</div><div class="water-lines">≈ ≈ ≈</div><div class="card-name">Звезда</div></div><div class="feature-text"><div class="eyebrow">КАРТА ДНЯ · СТАРШИЙ АРКАН</div><h2>XVII — Звезда</h2><p>Надежда, вдохновение и тихая уверенность в будущем. После сложного периода появляется пространство для восстановления и нового взгляда.</p><div class="tag-row"><span>Надежда</span><span>Обновление</span><span>Вдохновение</span></div><button class="primary-button" data-action="card">Изучить значение <span>→</span></button></div></article><div class="quick-grid"><button class="quick-tile" data-action="Расклады"><span>♧</span><b>Расклады</b><small>Практика чтения</small></button><button class="quick-tile" data-action="Экзамен"><span>♜</span><b>Экзамен</b><small>Проверьте знания</small></button><button class="quick-tile" data-action="Дуэли"><span>⚔</span><b>Дуэли</b><small>Состязание умов</small></button><button class="quick-tile" data-action="Конструктор"><span>⚙</span><b>Конструктор</b><small>Создайте расклад</small></button><button class="quick-tile" data-action="Библиотека"><span>▤</span><b>Библиотека</b><small>Колоды и книги</small></button><button class="quick-tile" data-action="Дневник"><span>✎</span><b>Дневник</b><small>Ваши наблюдения</small></button></div></div>
+      </section>
+
+      <section class="page" id="page-astrology">
+        <div class="page-title"><div class="eyebrow">НЕБО · ЦИКЛЫ · ВЗАИМОСВЯЗИ</div><h1>Астрология</h1><p>Исследуйте натальную карту, планетарные циклы и символический язык небесных тел.</p></div>
+        <div class="tabs"><button class="selected">Натал</button><button>Транзиты</button><button>Прогноз</button><button>Синастрия</button></div>
+        <div class="astro-layout"><article class="panel zodiac-panel"><div class="zodiac-wheel"><div class="wheel-inner"><span>☉</span><b>КАРТА<br>НЕБА</b><small>12 ДОМОВ · 12 ЗНАКОВ</small></div><div class="zodiac-labels">♈　♉　♊　♋<br>♌　　　　　♍<br>♎　　　　　♏<br>♐　♑　♒　♓</div></div><div class="panel-caption">СИМВОЛИЧЕСКАЯ КАРТА НАТАЛА</div></article><div class="astro-tools"><button class="tool-row" data-action="Анализ карты"><span>☷</span><div><b>Анализ карты</b><small>Планеты и положения</small></div>→</button><button class="tool-row" data-action="Дома"><span>⌂</span><div><b>Дома</b><small>Сферы жизненного опыта</small></div>→</button><button class="tool-row" data-action="Аспекты"><span>◇</span><div><b>Аспекты</b><small>Связи между планетами</small></div>→</button><button class="tool-row" data-action="Релокация"><span>⌖</span><div><b>Релокация</b><small>География натальной карты</small></div>→</button><button class="tool-row" data-action="Календарь"><span>▦</span><div><b>Календарь</b><small>Астрологические события</small></div>→</button><button class="tool-row" data-action="Обучение"><span>♧</span><div><b>Обучение</b><small>Курс начинающего астролога</small></div>→</button></div></div>
+      </section>
+
+      <section class="page" id="page-psychology">
+        <div class="page-title"><div class="eyebrow">ВНУТРЕННИЙ МИР · ОСОЗНАННОСТЬ</div><h1>Психология</h1><p>Инструменты самонаблюдения, эмоциональной грамотности и личного развития.</p></div>
+        <div class="tabs"><button class="selected">Самопознание</button><button>Отношения</button><button>Практики</button></div>
+        <div class="psych-layout"><article class="panel brain-panel"><div class="brain-illustration">❋</div><h3>Карта внутреннего мира</h3><p>Исследуйте привычные реакции и способы мышления.</p><div class="progress-row"><span>Эмоции</span><i><b style="width:72%"></b></i><small>72%</small></div><div class="progress-row"><span>Мышление</span><i><b style="width:58%"></b></i><small>58%</small></div><div class="progress-row"><span>Поведение</span><i><b style="width:64%"></b></i><small>64%</small></div><div class="progress-row"><span>Убеждения</span><i><b style="width:46%"></b></i><small>46%</small></div></article><div class="psych-tools" id="psychTools"></div></div>
+      </section>
+
+      <section class="page" id="page-dreams">
+        <div class="dream-hero"><div class="dream-copy"><div class="eyebrow">ПАМЯТЬ · ОБРАЗЫ · СИМВОЛЫ</div><h1>Сновидения</h1><p>Дневник снов — пространство для бережного исследования ночных историй и личных ассоциаций.</p><div class="dream-entry"><small>ПОСЛЕДНЯЯ ЗАПИСЬ · 28 ОКТЯБРЯ</small><h3>Синие огни большого города в облаках...</h3><span>Символы: город, высота, свет</span></div><button class="primary-button" data-action="Новая запись">Записать сон <span>→</span></button></div><div class="moon-scene"><div class="moon"></div><div class="dream-star">✦</div><div class="dream-hill"></div><div class="dream-window">⌁</div></div></div><div class="section-heading"><div><div class="eyebrow">ИНСТРУМЕНТЫ</div><h2>Исследуйте свои сны</h2></div></div><div class="quick-grid four"><button class="quick-tile" data-action="Записать сон"><span>✎</span><b>Записать сон</b><small>Новая история</small></button><button class="quick-tile" data-action="Толкование"><span>☷</span><b>Толкование</b><small>Работа с образами</small></button><button class="quick-tile" data-action="Повторы"><span>⟳</span><b>Повторы</b><small>Повторяющиеся темы</small></button><button class="quick-tile" data-action="Карта снов"><span>✧</span><b>Карта снов</b><small>Связи и символы</small></button></div>
+      </section>
+
+      <section class="page" id="page-arena"><div class="page-title"><div class="eyebrow">СОРЕВНОВАНИЕ · ОБМЕН ОПЫТОМ</div><h1>Арена Знаний</h1><p>Проверьте свои навыки в интеллектуальных поединках и командных турнирах.</p></div><div class="tabs"><button class="selected">Дуэль</button><button>Турнир</button><button>Лига</button><button>Гильдии</button></div><div class="panel duel-panel"><div class="duelist"><div class="avatar">А</div><h3>Алексей</h3><p>Таролог</p><b>★ Мастер</b></div><div class="versus">VS<small>ПОЕДИНОК</small></div><div class="duelist"><div class="avatar alt">Л</div><h3>Лиана</h3><p>Астролог</p><b>★ Эксперт</b></div><div class="duel-topic"><small>ТЕМА ДУЭЛИ</small><b>Отношения в раскладе Таро</b></div><div class="countdown"><span>⌛</span> До начала: <b id="countdown">12:36</b></div><button class="primary-button duel-button" data-action="Войти в дуэль">⚔ Войти в дуэль</button></div></section>
+
+      <section class="page" id="page-themes"><div class="page-title"><div class="eyebrow">ВНЕШНИЙ ВИД</div><h1>Темы оформления</h1><p>Выберите атмосферу, в которой вам приятнее исследовать знания.</p></div><div class="theme-list" id="themeList"></div></section>
+      <section class="page" id="page-lab"><div class="page-title"><div class="eyebrow">ЭКСПЕРИМЕНТЫ И СВЯЗИ</div><h1>Междисциплинарная лаборатория</h1><p>Объединяйте инструменты разных направлений и создавайте собственные исследования.</p></div><div class="domain-grid" id="labGrid"></div></section>
+      <section class="page" id="page-profiling"><div class="page-title"><div class="eyebrow">НАБЛЮДЕНИЕ И КОММУНИКАЦИЯ</div><h1>Профайлинг</h1><p>Демо-раздел для изучения поведенческих паттернов и стилей общения.</p></div><div class="panel placeholder-panel">◎<h2>Лаборатория наблюдений</h2><p>Здесь появятся учебные кейсы, упражнения и заметки исследователя.</p></div></section>
+      <section class="page" id="page-nlp"><div class="page-title"><div class="eyebrow">ЯЗЫК И МЫШЛЕНИЕ</div><h1>NLP</h1><p>Учебное пространство по моделям коммуникации и языковым паттернам.</p></div><div class="panel placeholder-panel">☷<h2>Практикум коммуникации</h2><p>Здесь будут собраны упражнения и разборы диалогов.</p></div></section>
+      <section class="page" id="page-numerology"><div class="page-title"><div class="eyebrow">ЧИСЛА И СИМВОЛЫ</div><h1>Нумерология</h1><p>Исследуйте числовые системы как символический язык и культурную традицию.</p></div><div class="panel number-panel"><div>3 · 7 · 9</div><h2>Число жизненного пути</h2><p>Введите дату для демонстрационного расчёта.</p><input id="birthDate" type="date"><button class="primary-button" id="numberCalc">Рассчитать <span>→</span></button><p id="numberResult" class="result-note"></p></div></section>
+    </main>
+  </div>
+  <nav class="mobile-bottom"><button data-page="home" class="active"><span>⌂</span>Главная</button><button data-page="map"><span>⌘</span>Карта</button><button data-page="arena"><span>⚔</span>Арена</button><button data-page="themes"><span>☼</span>Темы</button></nav>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>
