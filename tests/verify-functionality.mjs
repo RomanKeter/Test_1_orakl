@@ -160,7 +160,7 @@ try{
   await clickHotspot('arena','Войти в дуэль');
   await page.locator('#modalBody textarea[name="answer"]').fill('Я читаю Звезду как спокойное восстановление доверия. Эта карта показывает надежду, а Отшельник добавляет время для размышления.');
   await page.locator('#modalBody button[type="submit"]').click();
-  assert.equal(Number(await page.locator('.atlas-result-score').textContent()),'Я читаю Звезду как спокойное восстановление доверия. Эта карта показывает надежду, а Отшельник добавляет время для размышления.'.trim().split(/\s+/).length,'Duel word count should count whitespace-separated words');
+  assert.equal(parseInt(await page.locator('.atlas-result-score').textContent(),10),'Я читаю Звезду как спокойное восстановление доверия. Эта карта показывает надежду, а Отшельник добавляет время для размышления.'.trim().split(/\s+/).length,'Duel word count should count whitespace-separated words');
   assert.equal((await saved()).duelHistory.length,1,'Duel answer should be recorded');
   assert.match(await page.locator('#modalTitle').textContent(),/Ответ принят/);
   await closeModal();
