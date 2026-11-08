@@ -185,9 +185,10 @@ function openDuel(){
   modalContent('Дуэль · Отношения в раскладе Таро','<p>Демонстрационный поединок. Напишите свою интерпретацию ситуации. Локальная проверка оценит только заполненность ответа, а не его качество; второй участник не подключён.</p><form data-form="duel">'+areaField('Ваша трактовка','answer','Опишите ситуацию, аргументируйте значение карты и свяжите вывод с вопросом…')+'<button class="atlas-button primary" type="submit">Отправить ответ</button></form><h3 class="atlas-subheading">История ваших ответов</h3>'+renderSavedEntries(userState.duelHistory,'Вы ещё не участвовали в демонстрационной дуэли.','duel'));
 }
 function applyTheme(id,notify=true){
-  const allowed=(ATLAS_DATA.themes||[]).some(t=>t.id===id)?id:'cabinet';
+  const selected=(ATLAS_DATA.themes||[]).find(t=>t.id===id||t.name===id);
+  const allowed=selected?.id||'cabinet';
   userState.theme=allowed;document.querySelector('.device').dataset.theme=allowed;document.body.dataset.theme=allowed;persist();
-  if(notify)showModal('Тема оформления', '<p>Применена тема «'+esc((ATLAS_DATA.themes.find(t=>t.id===allowed)||{}).name||allowed)+'». Выбор сохранён в этом браузере. Исходные изображения экранов остаются неизменными; меняется только оттенок оформления.</p>');
+  if(notify)showModal('Тема оформления', '<p>Применена тема «'+esc((selected||{}).name||allowed)+'». Выбор сохранён в этом браузере. Исходные изображения экранов остаются неизменными; меняется только оттенок оформления.</p>');
 }
 function openThemeList(){
   modalContent('Темы оформления','<p>Выберите цветовую атмосферу. Настройка сохраняется локально.</p><div class="atlas-choice-list">'+(ATLAS_DATA.themes||[]).map(t=>'<button type="button" class="atlas-choice '+(userState.theme===t.id?'chosen':'')+'" data-modal-action="choose-theme" data-theme="'+esc(t.id)+'"><span>✧</span><b>'+esc(t.name)+'<small>'+esc(t.description)+'</small></b><i>'+(userState.theme===t.id?'✓':'○')+'</i></button>').join('')+'</div>');
