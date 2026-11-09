@@ -75,10 +75,17 @@ try {
   assert.equal(await page.locator('#devicePageName').textContent(), 'Таро');
 
   // Hotspot and modal interaction.
-  await page.locator('.screen[data-page="tarot"] .hit[aria-label="Карта Звезда"]').click();
+  const tarotCardHotspot = page.locator('.screen[data-page="tarot"] .hit[aria-label="Карта Звезда"]');
+  await tarotCardHotspot.click();
   assert.equal(await page.locator('#modal').isVisible(), true, 'Tarot card should open its detail modal');
-  await page.locator('#modalOk').click();
-  assert.equal(await page.locator('#modal').isVisible(), false, 'Modal should close');
+  assert.equal(await page.evaluate(() => document.activeElement?.id), 'modalOk', 'Opening a modal should move focus inside it');
+  await page.keyboard.press('Shift+Tab');
+  assert.equal(await page.evaluate(() => document.activeElement?.id), 'modalOk', 'Shift+Tab from the first control should wrap to the last control');
+  await page.keyboard.press('Tab');
+  assert.equal(await page.evaluate(() => document.activeElement?.id), 'modalClose', 'Tab from the last control should wrap to the first control');
+  await page.keyboard.press('Escape');
+  assert.equal(await page.locator('#modal').isVisible(), false, 'Escape should close the modal');
+  assert.equal(await page.evaluate(() => document.activeElement?.getAttribute('aria-label')), 'Карта Звезда', 'Closing a modal should restore focus to its opener');
   await page.locator('.screen[data-page="tarot"] .hit[aria-label="Назад"]').click();
   await page.waitForFunction(() => document.querySelector('.screen.active')?.dataset.page === 'home');
 
@@ -113,6 +120,13 @@ try {
   await page.locator('.screen[data-page="home"] .hit[aria-label="Таро"]').click();
   await page.waitForFunction(() => document.querySelector('.screen.active')?.dataset.page === 'tarot');
   await page.screenshot({ path: 'test-results/mobile.png', fullPage: true });
+
+  // Narrow mobile and intermediate tablet widths must not introduce horizontal overflow.
+  for (const width of [320, 360, 768, 1024]) {
+    await page.setViewportSize({ width, height: 900 });
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth);
+    assert.equal(overflow, false, 'No horizontal overflow at viewport width ' + width);
+  }
 
   assert.deepEqual(failures, [], 'Browser console/runtime errors should be absent');
   console.log('PASS: 8 screens, hotspots, desktop/tablet/mobile layouts, navigation, browser history, modal and no console errors.');
