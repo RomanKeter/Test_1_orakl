@@ -134,12 +134,24 @@ try{
   await page.locator('#modalBody button[type="submit"]').click();
   assert.equal((await saved()).dreams.length,2,'Second dream should be saved');
   await closeModal();
+  const firstDreamId=(await saved()).dreams[0].id;
+  await clickHotspot('dreams','Записать сон');
+  await page.locator('#modalBody [data-modal-action="edit-dream"][data-id="'+firstDreamId+'"]').click();
+  await page.locator('#modalBody textarea[name="text"]').fill('Обновлённый сюжет: город, огни и река.');
+  await page.locator('#modalBody button[type="submit"]').click();
+  assert.match((await saved()).dreams.find(d=>d.id===firstDreamId).text,/Обновлённый сюжет/,'Dream editing should update the existing entry');
+  await closeModal();
   await clickHotspot('dreams','Повторы');
   assert.match(await page.locator('#modalBody').textContent(),/вода — 2 раза/);
   await closeModal();
   await clickHotspot('dreams','Символы');
   await page.locator('#dreamSymbolSearch').fill('вода');
   assert.match(await page.locator('#dreamSymbolList').textContent(),/Эмоции, перемены/);
+  await closeModal();
+  await clickHotspot('dreams','Записать сон');
+  const secondDreamId=(await saved()).dreams[1].id;
+  await page.locator('#modalBody [data-modal-action="delete-entry"][data-id="'+secondDreamId+'"]').click();
+  assert.equal((await saved()).dreams.length,1,'Deleting a dream should remove only the selected entry');
   await closeModal();
 
   // Themes: selection changes the active theme and survives a reload.
@@ -188,8 +200,16 @@ try{
   await closeModal();
 
   // Browser runtime should remain free of uncaught errors.
+  // Corrupted local storage should fall back to a clean default state instead of blocking startup.
+  const recoveryPage=await browser.newPage({viewport:{width:390,height:844}});
+  await recoveryPage.addInitScript(()=>localStorage.setItem('atlas-knowledge-v1','{broken-json'));
+  await recoveryPage.goto('http://127.0.0.1:4174/',{waitUntil:'domcontentloaded'});
+  await recoveryPage.waitForSelector('.screens.ready',{timeout:30000});
+  assert.equal(await recoveryPage.locator('.device').getAttribute('data-theme'),'cabinet','Invalid saved JSON should recover to the default theme');
+  await recoveryPage.close();
+
   assert.deepEqual(pageErrors,[],'No uncaught browser errors');
-  console.log('PASS: tarot spreads/notes/exam, astrology natal and synastry, psychology tests/CBT/projects, dream journal/symbols/repeats, persistent themes, arena, profiling, NLP, numerology, laboratory and browser runtime.');
+  console.log('PASS: module workflows, dream edit/delete, corrupted-storage recovery, persistence and browser runtime.');
 }catch(error){
   console.error(error);
   process.exitCode=1;
