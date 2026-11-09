@@ -79,6 +79,7 @@ try {
   await tarotCardHotspot.click();
   assert.equal(await page.locator('#modal').isVisible(), true, 'Tarot card should open its detail modal');
   assert.equal(await page.evaluate(() => document.activeElement?.id), 'modalOk', 'Opening a modal should move focus inside it');
+  await page.locator('#modalClose').focus();
   await page.keyboard.press('Shift+Tab');
   assert.equal(await page.evaluate(() => document.activeElement?.id), 'modalOk', 'Shift+Tab from the first control should wrap to the last control');
   await page.keyboard.press('Tab');
