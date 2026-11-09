@@ -179,3 +179,25 @@
   #modalBody .atlas-drawn-grid{grid-template-columns:1fr}
   #modalBody .atlas-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+
+/* Stage 4: visible keyboard focus and reduced-motion support. */
+.hit:focus-visible,
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #e7b85f;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 2px rgba(39, 25, 14, .88);
+}
+.modal [tabindex="-1"]:focus { outline: none; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
