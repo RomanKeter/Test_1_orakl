@@ -53,6 +53,21 @@ class StorageTests(unittest.TestCase):
         self.assertIn("Будь кратким и критичным.", instructions)
         self.assertIn("Проверяй факты перед выводом.", instructions)
 
+    def test_saved_corrections_are_included_as_learning_examples(self):
+        bot.ensure_user(333, "Jordan")
+        with bot.db_connection() as db:
+            db.execute(
+                """
+                INSERT INTO corrections (telegram_id, original_answer, corrected_answer)
+                VALUES (?, ?, ?)
+                """,
+                (333, "Ответ без проверки.", "Сначала проверь факты и укажи источник."),
+            )
+
+        instructions = bot.build_instructions(333)
+        self.assertIn("Ответ без проверки.", instructions)
+        self.assertIn("Сначала проверь факты и укажи источник.", instructions)
+
     def test_last_assistant_answer_is_retrieved(self):
         bot.ensure_user(404, "Taylor")
         bot.save_message(404, "assistant", "Первый ответ")
