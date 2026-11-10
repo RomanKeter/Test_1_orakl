@@ -28,7 +28,7 @@
 ```bash
 sudo apt update
 sudo apt install -y python3 python3-venv python3-pip git
-git clone https://github.com/RomanKeter/Test_1_orakl.git
+git clone -b telegram-ai-bot-stage-1 https://github.com/RomanKeter/Test_1_orakl.git
 cd Test_1_orakl/telegram-ai-bot
 python3 -m venv .venv
 source .venv/bin/activate
