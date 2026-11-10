@@ -3,8 +3,8 @@ from __future__ import annotations
 import logging
 import os
 import sqlite3
+from contextlib import contextmanager
 from pathlib import Path
-from typing import Any
 
 from dotenv import load_dotenv
 from openai import AsyncOpenAI
@@ -52,8 +52,21 @@ def connect_db() -> sqlite3.Connection:
     return connection
 
 
+@contextmanager
+def db_connection():
+    connection = connect_db()
+    try:
+        yield connection
+        connection.commit()
+    except Exception:
+        connection.rollback()
+        raise
+    finally:
+        connection.close()
+
+
 def init_db() -> None:
-    with connect_db() as db:
+    with db_connection() as db:
         db.executescript(
             """
             CREATE TABLE IF NOT EXISTS users (
@@ -95,7 +108,7 @@ def init_db() -> None:
 
 
 def ensure_user(telegram_id: int, display_name: str) -> None:
-    with connect_db() as db:
+    with db_connection() as db:
         db.execute(
             """
             INSERT INTO users (telegram_id, display_name)
@@ -107,7 +120,7 @@ def ensure_user(telegram_id: int, display_name: str) -> None:
 
 
 def save_message(telegram_id: int, role: str, content: str) -> None:
-    with connect_db() as db:
+    with db_connection() as db:
         db.execute(
             "INSERT INTO messages (telegram_id, role, content) VALUES (?, ?, ?)",
             (telegram_id, role, content),
@@ -115,7 +128,7 @@ def save_message(telegram_id: int, role: str, content: str) -> None:
 
 
 def get_recent_messages(telegram_id: int, limit: int = 12) -> list[dict[str, str]]:
-    with connect_db() as db:
+    with db_connection() as db:
         rows = db.execute(
             """
             SELECT role, content FROM messages
@@ -128,7 +141,7 @@ def get_recent_messages(telegram_id: int, limit: int = 12) -> list[dict[str, str
 
 
 def get_last_assistant_answer(telegram_id: int) -> str | None:
-    with connect_db() as db:
+    with db_connection() as db:
         row = db.execute(
             """
             SELECT content FROM messages
@@ -141,14 +154,14 @@ def get_last_assistant_answer(telegram_id: int) -> str | None:
 
 
 def get_user_settings(telegram_id: int) -> sqlite3.Row | None:
-    with connect_db() as db:
+    with db_connection() as db:
         return db.execute(
             "SELECT * FROM users WHERE telegram_id = ?", (telegram_id,)
         ).fetchone()
 
 
 def get_enabled_rules(telegram_id: int) -> list[str]:
-    with connect_db() as db:
+    with db_connection() as db:
         rows = db.execute(
             "SELECT rule FROM rules WHERE telegram_id = ? AND enabled = 1 ORDER BY id",
             (telegram_id,),
@@ -222,7 +235,7 @@ async def persona_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     ensure_user(user.id, user.full_name)
     new_persona = " ".join(context.args).strip()
     if new_persona:
-        with connect_db() as db:
+        with db_connection() as db:
             db.execute(
                 "UPDATE users SET persona = ? WHERE telegram_id = ?",
                 (new_persona[:4000], user.id),
@@ -250,7 +263,7 @@ async def teach_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         await message.reply_text("Одно правило должно быть не длиннее 1000 символов.")
         return
     ensure_user(user.id, user.full_name)
-    with connect_db() as db:
+    with db_connection() as db:
         db.execute(
             "INSERT INTO rules (telegram_id, rule) VALUES (?, ?)",
             (user.id, rule),
@@ -287,7 +300,7 @@ async def correct_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     if not original:
         await message.reply_text("Пока нечего исправлять: сначала поговори со мной.")
         return
-    with connect_db() as db:
+    with db_connection() as db:
         db.execute(
             """
             INSERT INTO corrections (telegram_id, original_answer, corrected_answer)
@@ -307,7 +320,7 @@ async def forget_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     message = update.effective_message
     if not user or not message:
         return
-    with connect_db() as db:
+    with db_connection() as db:
         db.execute("DELETE FROM messages WHERE telegram_id = ?", (user.id,))
         db.execute("DELETE FROM corrections WHERE telegram_id = ?", (user.id,))
         db.execute("DELETE FROM rules WHERE telegram_id = ?", (user.id,))
