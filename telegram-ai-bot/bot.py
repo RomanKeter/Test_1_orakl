@@ -209,7 +209,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "/teach текст — добавить постоянное правило\n"
         "/rules — показать правила\n"
         "/correct текст — исправить мой последний ответ\n"
-        "/forget — удалить твою историю, правила и настройки"
+        "/forget — удалить твою историю, правила и настройки\\n\\n"
+        "Важно: история, настройки и исправления сохраняются в локальной базе владельца бота. "
+        "Не отправляй пароли и другие секретные данные."
     )
 
 
@@ -383,13 +385,14 @@ def main() -> None:
     init_db()
 
     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("help", help_command))
-    application.add_handler(CommandHandler("persona", persona_command))
-    application.add_handler(CommandHandler("teach", teach_command))
-    application.add_handler(CommandHandler("rules", rules_command))
-    application.add_handler(CommandHandler("correct", correct_command))
-    application.add_handler(CommandHandler("forget", forget_command))
+    private_chat = filters.ChatType.PRIVATE
+    application.add_handler(CommandHandler("start", start, filters=private_chat))
+    application.add_handler(CommandHandler("help", help_command, filters=private_chat))
+    application.add_handler(CommandHandler("persona", persona_command, filters=private_chat))
+    application.add_handler(CommandHandler("teach", teach_command, filters=private_chat))
+    application.add_handler(CommandHandler("rules", rules_command, filters=private_chat))
+    application.add_handler(CommandHandler("correct", correct_command, filters=private_chat))
+    application.add_handler(CommandHandler("forget", forget_command, filters=private_chat))
     application.add_handler(
         MessageHandler(filters.ChatType.PRIVATE & filters.TEXT & ~filters.COMMAND, handle_text)
     )
